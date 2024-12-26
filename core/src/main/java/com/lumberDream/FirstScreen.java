@@ -4,15 +4,17 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.lumberDream.entity.Entity;
@@ -29,6 +31,7 @@ public class FirstScreen implements Screen {
 
     private final Game agame;
     OrthographicCamera camera;
+    Vector3 cameraVector = new Vector3();
     ExtendViewport viewport;
 
     BackGroundManager backGroundManager;
@@ -59,13 +62,17 @@ public class FirstScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
         Table root = new Table();
         root.setFillParent(true);
-        Button button = new Button(skin);
-        button.add(new Label("aaa", skin));
 
-        root.add(button).width(100).height(50).center();
+        Table bottomHotBar = new Table();
+        TextButton tool1 = new TextButton("tool1", skin);
+        bottomHotBar.add(tool1).width(100).height(50);
+        TextButton tool2 = new TextButton("tool2", skin);
+        bottomHotBar.add(tool2).width(100).height(50);
+
+        root.add(bottomHotBar).expandY().bottom();
 
         stage.addActor(root);
-
+        stage.setDebugAll(true);
         // init entities
         entityMap.put(
             "player",
@@ -94,6 +101,17 @@ public class FirstScreen implements Screen {
         viewport.apply();
         spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
 
+
+        // camera follows player character
+        Entity player = this.entityMap.get("player");
+        // we want player to be in the middle of viewport
+        // players position is in the left bottom corner
+        cameraVector.x = player.getX() + 0.5f;
+        cameraVector.y = player.getY() + 0.5f;
+        viewport.getCamera().position.lerp(cameraVector, 0.1f);
+
+
+
         if (Gdx.input.isKeyPressed(Input.Keys.N)) {
             agame.setScreen(new SecondScreen(agame));
         }
@@ -110,6 +128,16 @@ public class FirstScreen implements Screen {
 
         entityMap.forEach((id, entity) -> entity.getSprite().draw(spriteBatch));
         spriteBatch.end();
+
+        ShapeRenderer sr = new ShapeRenderer();
+        sr.setProjectionMatrix(viewport.getCamera().combined);
+        sr.begin(ShapeRenderer.ShapeType.Line);
+        sr.setColor(new Color(0, 0, 1, 0));
+        for (var entry : entityMap.entrySet()) {
+            Rectangle tmp = entry.getValue().getHitBox();
+            sr.rect(tmp.x, tmp.y, tmp.width, tmp.height);
+        }
+        sr.end();
     }
 
     @Override
