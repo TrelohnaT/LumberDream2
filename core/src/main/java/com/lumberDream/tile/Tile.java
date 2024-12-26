@@ -7,10 +7,12 @@ public interface Tile {
     String getId();
     float getX();
     float getY();
+    float getWidth();
+    float getHeight();
 
     Sprite getSprite();
 
-    void load();
-    void clear();
+    void load(Sprite sprite);
+    void unload();
 
 }

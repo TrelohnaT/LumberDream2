@@ -13,8 +13,9 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.lumberDream.entity.Entity;
@@ -86,8 +87,9 @@ public class FirstScreen implements Screen {
             )
         );
 
-        backGroundManager = new BackGroundManager(1, 1);
-        backGroundManager.generateBackground("grass_bg", "background/background.atlas");
+        backGroundManager = new BackGroundManager(BackGroundManager.mapBlueprint, "background/background.atlas");
+        //backGroundManager = new BackGroundManager(1, 1);
+        //backGroundManager.generateBackground("grass_bg", "background/background.atlas");
     }
 
     @Override
@@ -111,7 +113,6 @@ public class FirstScreen implements Screen {
         viewport.getCamera().position.lerp(cameraVector, 0.1f);
 
 
-
         if (Gdx.input.isKeyPressed(Input.Keys.N)) {
             agame.setScreen(new SecondScreen(agame));
         }
@@ -124,11 +125,12 @@ public class FirstScreen implements Screen {
 
         spriteBatch.begin();
 
-        this.backGroundManager.getTileMap().forEach((id, tile) -> tile.getSprite().draw(spriteBatch));
-
+        if (this.backGroundManager != null) {
+            this.backGroundManager.getTileMap(player.getX(), player.getY()).forEach((id, tile) -> tile.getSprite().draw(spriteBatch));
+        }
         entityMap.forEach((id, entity) -> entity.getSprite().draw(spriteBatch));
         spriteBatch.end();
-
+/*
         ShapeRenderer sr = new ShapeRenderer();
         sr.setProjectionMatrix(viewport.getCamera().combined);
         sr.begin(ShapeRenderer.ShapeType.Line);
@@ -137,7 +139,7 @@ public class FirstScreen implements Screen {
             Rectangle tmp = entry.getValue().getHitBox();
             sr.rect(tmp.x, tmp.y, tmp.width, tmp.height);
         }
-        sr.end();
+        sr.end();*/
     }
 
     @Override
@@ -165,8 +167,9 @@ public class FirstScreen implements Screen {
     public void dispose() {
         // Destroy screen's assets here.
         skin.dispose();
-
         entityMap.forEach((id, entity) -> entity.clear());
+        spriteBatch.dispose();
+        stage.dispose();
 
     }
 
