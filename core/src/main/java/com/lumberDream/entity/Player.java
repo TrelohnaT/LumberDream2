@@ -93,8 +93,8 @@ public class Player implements Entity {
         TextureRegion tr = animation.getKeyFrame(Main.timeElapsed, true);
         Sprite tmp = new Sprite(tr);
         tmp.setSize(1, 1);
-        tmp.translateX(this.x);
-        tmp.translateY(this.y);
+        tmp.translateX(this.x + this.sizeX/2);
+        tmp.translateY(this.y + this.sizeY/2);
         return tmp;
     }
 

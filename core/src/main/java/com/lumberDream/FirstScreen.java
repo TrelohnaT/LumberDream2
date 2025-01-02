@@ -20,6 +20,8 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.lumberDream.entity.Entity;
 import com.lumberDream.entity.Player;
+import com.lumberDream.handlers.UiHandler;
+import com.lumberDream.handlers.ViewStuffHandler;
 import com.lumberDream.tile.BackGroundManager;
 
 import java.util.HashMap;
@@ -31,16 +33,15 @@ import java.util.Map;
 public class FirstScreen implements Screen {
 
     private final Game agame;
-    OrthographicCamera camera;
-    Vector3 cameraVector = new Vector3();
-    ExtendViewport viewport;
 
     BackGroundManager backGroundManager;
 
+    ViewStuffHandler viewStuffHandler;
+
     SpriteBatch spriteBatch;
     Stage stage;
-    Skin skin;
 
+    private UiHandler uiHandler;
     private final Map<String, Entity> entityMap = new HashMap<>();
 
     public FirstScreen(Game agame) {
@@ -51,28 +52,13 @@ public class FirstScreen implements Screen {
     public void show() {
         // Prepare your screen here.
         spriteBatch = new SpriteBatch();
-
-        float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
-        camera = new OrthographicCamera(9, 7 * (h / w));
-        viewport = new ExtendViewport(9, 7, camera);
-
-        skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
+        uiHandler = new UiHandler();
+        viewStuffHandler = new ViewStuffHandler();
 
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
-        Table root = new Table();
-        root.setFillParent(true);
 
-        Table bottomHotBar = new Table();
-        TextButton tool1 = new TextButton("tool1", skin);
-        bottomHotBar.add(tool1).width(100).height(50);
-        TextButton tool2 = new TextButton("tool2", skin);
-        bottomHotBar.add(tool2).width(100).height(50);
-
-        root.add(bottomHotBar).expandY().bottom();
-
-        stage.addActor(root);
+        stage.addActor(uiHandler.getUi());
         stage.setDebugAll(true);
         // init entities
         entityMap.put(
@@ -87,7 +73,7 @@ public class FirstScreen implements Screen {
             )
         );
 
-        backGroundManager = new BackGroundManager(BackGroundManager.mapBlueprint, "background/background.atlas");
+        backGroundManager = new BackGroundManager(6,4,BackGroundManager.mapBlueprint, "background/background.atlas");
         //backGroundManager = new BackGroundManager(1, 1);
         //backGroundManager.generateBackground("grass_bg", "background/background.atlas");
     }
@@ -99,37 +85,38 @@ public class FirstScreen implements Screen {
         // Draw your screen here. "delta" is the time since last render in seconds.
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        viewport.getCamera().update();
-        viewport.apply();
-        spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
+        viewStuffHandler.getViewport().getCamera().update();
+        viewStuffHandler.getViewport().apply();
+        spriteBatch.setProjectionMatrix(viewStuffHandler.getViewport().getCamera().combined);
 
 
         // camera follows player character
         Entity player = this.entityMap.get("player");
         // we want player to be in the middle of viewport
         // players position is in the left bottom corner
-        cameraVector.x = player.getX() + 0.5f;
-        cameraVector.y = player.getY() + 0.5f;
-        viewport.getCamera().position.lerp(cameraVector, 0.1f);
+        viewStuffHandler.moveCamera(player.getX() + 0.5f, player.getY() + 0.5f);
 
 
         if (Gdx.input.isKeyPressed(Input.Keys.N)) {
             agame.setScreen(new SecondScreen(agame));
         }
 
-        stage.act();
-        stage.draw();
-
-
         entityMap.forEach((id, entity) -> entity.update());
 
         spriteBatch.begin();
 
         if (this.backGroundManager != null) {
-            this.backGroundManager.getTileMap(player.getX(), player.getY()).forEach((id, tile) -> tile.getSprite().draw(spriteBatch));
+            this.backGroundManager.getTileMap(player.getX(), player.getY())
+                .forEach((id, tile) -> tile.getSprite().draw(spriteBatch));
         }
         entityMap.forEach((id, entity) -> entity.getSprite().draw(spriteBatch));
         spriteBatch.end();
+
+        // UI will be rendered last
+        stage.act();
+        stage.draw();
+
+        //ToDo cause memory leak
 /*
         ShapeRenderer sr = new ShapeRenderer();
         sr.setProjectionMatrix(viewport.getCamera().combined);
@@ -145,7 +132,7 @@ public class FirstScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         // Resize your screen here. The parameters represent the new window size.
-        viewport.update(width, height, true);
+        viewStuffHandler.resize(width, height);
     }
 
     @Override
@@ -166,16 +153,13 @@ public class FirstScreen implements Screen {
     @Override
     public void dispose() {
         // Destroy screen's assets here.
-        skin.dispose();
         entityMap.forEach((id, entity) -> entity.clear());
         spriteBatch.dispose();
         stage.dispose();
+        uiHandler.dispose();
+        uiHandler = null;
+        viewStuffHandler = null;
 
-    }
-
-    private void handleZoom(float zoom) {
-        camera.zoom = zoom / 10;
-        camera.zoom = MathUtils.clamp(camera.zoom, 0.1f, 100 / camera.viewportWidth);
     }
 
 }
