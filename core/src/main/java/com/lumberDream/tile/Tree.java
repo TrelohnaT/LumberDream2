@@ -1,11 +1,13 @@
 package com.lumberDream.tile;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.lumberDream.config.biomes.ConfigTree;
 
-public class Grass implements Tile{
+public class Tree implements Tile{
+
 
     private final String id;
+    private final String type;
     private boolean isLoaded = false;
 
     private Sprite sprite;
@@ -14,12 +16,26 @@ public class Grass implements Tile{
     private float width = 0;
     private float height = 0;
 
-    public Grass(String id, Sprite sprite, float x, float y) {
-        this.id = id;
-        this.x = x * sprite.getWidth();
-        this.y = y * sprite.getWidth();
-        // we need to load sprite once to know its width and height
-        this.load(sprite);
+    public Tree(ConfigTree configTree, Sprite sprite) {
+        this.id = configTree.id;
+        this.type = configTree.type;
+        this.x = configTree.x * 100;
+        this.y = configTree.y * 100 * -1; // origin is in TOP left corner
+        load(sprite);
+    }
+
+    public Tree(
+        String id,
+        String type,
+        Sprite sprite,
+        float x,
+        float y
+    ) {
+       this.id = id;
+       this.type = type; //ToDo this could also determinate texture
+       this.x = x;
+       this.y = y;
+       load(sprite);
     }
 
     @Override
@@ -29,12 +45,12 @@ public class Grass implements Tile{
 
     @Override
     public float getX() {
-        return x;
+        return this.x;
     }
 
     @Override
     public float getY() {
-        return y;
+        return this.y;
     }
 
     @Override
@@ -49,13 +65,7 @@ public class Grass implements Tile{
 
     @Override
     public Sprite getSprite() {
-        //ToDo grass will be animated, this is just place holder
-//        Sprite tmp = new Sprite(this.atlas.createSprite("grass_bg"));
-//        // grass tile was multiplied only 2x
-//        tmp.setSize(1, 1);
-//        tmp.translateX(this.x/scale);
-//        tmp.translateY(this.y/scale);
-        return sprite;
+        return this.sprite;
     }
 
     @Override
@@ -64,7 +74,7 @@ public class Grass implements Tile{
             this.sprite = sprite;
             this.width = sprite.getWidth();
             this.height = sprite.getHeight();
-            //sprite.setSize(1, 1);
+            //sprite.setSize(2, 2);
             sprite.setPosition(this.x, this.y);
             isLoaded = true;
         }

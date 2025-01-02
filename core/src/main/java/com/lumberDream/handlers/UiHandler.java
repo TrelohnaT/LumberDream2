@@ -12,6 +12,7 @@ public class UiHandler {
     public UiHandler() {
         skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
     }
+    // ToDo resizing is not working good
 
     public Table getUi() {
 

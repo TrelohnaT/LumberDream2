@@ -22,32 +22,25 @@ public class Player implements Entity {
     private float y = 0; // not pixels but tiles
     private float previousX = 0;
     private float previousY = 0;
-    private float sizeX = 1;
-    private float sizeY = 1;
-    private final float speed = 1.5f;
+    private final float speed = 150f;
 
 
     private final String atlasPath;
     private TextureAtlas atlas;
     private String currentAnimation = idleAnimation;
 
-    private Rectangle hitBox;
+    private Rectangle hitBox; // ToDo check if this is alright
 
     public Player(
         String id,
         String atlasPath,
         float x,
-        float y,
-        float sizeX,
-        float sizeY
+        float y
     ) {
         this.id = id;
         this.atlasPath = atlasPath;
         this.x = x;
         this.y = y;
-        this.sizeX = sizeX;
-        this.sizeY = sizeY;
-        this.hitBox = new Rectangle(x, y, sizeX, sizeY);
         this.load();
     }
 
@@ -83,7 +76,7 @@ public class Player implements Entity {
             currentAnimation = idleAnimation;
         } else {
             // move hitBox
-            this.hitBox = new Rectangle(x, y, sizeX, sizeY);
+            this.hitBox.setPosition(this.x, this.y);
         }
     }
 
@@ -92,9 +85,9 @@ public class Player implements Entity {
         Animation<TextureRegion> animation = new Animation<>(1 / 15f, atlas.findRegions(currentAnimation));
         TextureRegion tr = animation.getKeyFrame(Main.timeElapsed, true);
         Sprite tmp = new Sprite(tr);
-        tmp.setSize(1, 1);
-        tmp.translateX(this.x + this.sizeX/2);
-        tmp.translateY(this.y + this.sizeY/2);
+        tmp.translateX(this.x - tmp.getWidth()/2);
+        tmp.translateY(this.y - tmp.getHeight()/2);
+        this.hitBox = new Rectangle(x, y, tmp.getWidth(), tmp.getHeight());
         return tmp;
     }
 

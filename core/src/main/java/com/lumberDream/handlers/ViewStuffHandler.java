@@ -16,8 +16,9 @@ public class ViewStuffHandler {
     public ViewStuffHandler() {
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
-        camera = new OrthographicCamera(9, 7 * (h / w));
-        viewport = new ExtendViewport(9, 7, camera);
+        camera = new OrthographicCamera(900, 700 * (h / w));
+        //camera.zoom = 2;
+        viewport = new ExtendViewport(900, 700, camera);
 
     }
 
@@ -29,10 +30,6 @@ public class ViewStuffHandler {
         cameraVector.x = x + 0.5f;
         cameraVector.y = y + 0.5f;
         viewport.getCamera().position.lerp(cameraVector, 0.1f);
-    }
-
-    public OrthographicCamera getCamera() {
-        return camera;
     }
 
     public ExtendViewport getViewport() {

@@ -18,6 +18,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.lumberDream.config.ConfigFactory;
+import com.lumberDream.config.ConfigMap;
 import com.lumberDream.entity.Entity;
 import com.lumberDream.entity.Player;
 import com.lumberDream.handlers.UiHandler;
@@ -34,12 +36,10 @@ public class FirstScreen implements Screen {
 
     private final Game agame;
 
-    BackGroundManager backGroundManager;
-
-    ViewStuffHandler viewStuffHandler;
-
-    SpriteBatch spriteBatch;
-    Stage stage;
+    private BackGroundManager backGroundManager;
+    private ViewStuffHandler viewStuffHandler;
+    private SpriteBatch spriteBatch;
+    private Stage stage;
 
     private UiHandler uiHandler;
     private final Map<String, Entity> entityMap = new HashMap<>();
@@ -66,22 +66,28 @@ public class FirstScreen implements Screen {
             new Player(
                 "player",
                 "atlasPlayerMove/playerMove.atlas",
-                0,
-                0,
-                1,
-                1
+                500,
+                -500
             )
         );
 
         backGroundManager = new BackGroundManager(
-            -6,
-            -4,
-            6,
-            4,
-            BackGroundManager.mapBlueprint,
-            "background/background.atlas");
+            600,
+            400,
+            ConfigFactory.getMapConfig()
+        );
+
+//        backGroundManager = new BackGroundManager(
+//            0,
+//            0,
+//            6,
+//            4,
+//            BackGroundManager.mapBlueprint,
+//            "background/background.atlas");
         //backGroundManager = new BackGroundManager(1, 1);
         //backGroundManager.generateBackground("grass_bg", "background/background.atlas");
+
+
     }
 
     @Override
@@ -112,8 +118,14 @@ public class FirstScreen implements Screen {
         spriteBatch.begin();
 
         if (this.backGroundManager != null) {
+            // first background
             this.backGroundManager.getTileMap(player.getX(), player.getY())
                 .forEach((id, tile) -> tile.getSprite().draw(spriteBatch));
+
+            // second trees
+            this.backGroundManager.getTreeMap(player.getX(), player.getY())
+                .forEach((id, tile) -> tile.getSprite().draw(spriteBatch));
+
         }
         entityMap.forEach((id, entity) -> entity.getSprite().draw(spriteBatch));
         spriteBatch.end();
