@@ -73,7 +73,13 @@ public class FirstScreen implements Screen {
             )
         );
 
-        backGroundManager = new BackGroundManager(6,4,BackGroundManager.mapBlueprint, "background/background.atlas");
+        backGroundManager = new BackGroundManager(
+            -6,
+            -4,
+            6,
+            4,
+            BackGroundManager.mapBlueprint,
+            "background/background.atlas");
         //backGroundManager = new BackGroundManager(1, 1);
         //backGroundManager.generateBackground("grass_bg", "background/background.atlas");
     }

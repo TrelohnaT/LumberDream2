@@ -7,15 +7,12 @@ public class Grass implements Tile{
 
     private final String id;
     private boolean isLoaded = false;
-    private final int scale = 1;
 
     private Sprite sprite;
     private float x = 0;
     private float y = 0;
     private float width = 0;
     private float height = 0;
-
-    private TextureAtlas atlas;
 
     public Grass(String id, Sprite sprite, float x, float y) {
         this.id = id;
