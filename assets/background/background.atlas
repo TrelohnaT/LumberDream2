@@ -2,6 +2,12 @@ background.png
 size:512,512
 repeat:none
 grass_bg
-bounds:2,2,128,128
+bounds:132,2,128,128
 oak
 bounds:2,132,256,256
+oak_logs1
+bounds:2,2,128,128
+oak_logs2
+bounds:262,130,128,128
+oak_logs3
+bounds:260,260,128,128
