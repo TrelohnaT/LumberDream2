@@ -1,0 +1,9 @@
+{
+  "atlas": "background/background.atlas",
+  "trees": [
+    {
+      "type": "oak",
+      "count": 2
+    }
+  ]
+}

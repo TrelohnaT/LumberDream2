@@ -4,26 +4,16 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.lumberDream.config.ConfigFactory;
-import com.lumberDream.config.ConfigMap;
 import com.lumberDream.entity.Entity;
 import com.lumberDream.entity.Player;
 import com.lumberDream.handlers.UiHandler;
 import com.lumberDream.handlers.ViewStuffHandler;
+import com.lumberDream.object.MyObjectHandler;
 import com.lumberDream.tile.BackGroundManager;
 
 import java.util.HashMap;
@@ -38,9 +28,9 @@ public class FirstScreen implements Screen {
 
     private BackGroundManager backGroundManager;
     private ViewStuffHandler viewStuffHandler;
+    private MyObjectHandler objectHandler;
     private SpriteBatch spriteBatch;
     private Stage stage;
-
     private UiHandler uiHandler;
     private final Map<String, Entity> entityMap = new HashMap<>();
 
@@ -54,6 +44,7 @@ public class FirstScreen implements Screen {
         spriteBatch = new SpriteBatch();
         uiHandler = new UiHandler();
         viewStuffHandler = new ViewStuffHandler();
+        objectHandler = new MyObjectHandler(ConfigFactory.getObjectConfig());
 
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
@@ -122,13 +113,20 @@ public class FirstScreen implements Screen {
             this.backGroundManager.getTileMap(player.getX(), player.getY())
                 .forEach((id, tile) -> tile.getSprite().draw(spriteBatch));
 
-            // second trees
-            this.backGroundManager.getTreeMap(player.getX(), player.getY())
-                .forEach((id, tile) -> tile.getSprite().draw(spriteBatch));
-
         }
+
+        if(this.objectHandler != null) {
+            this.objectHandler.getObjectMap().forEach((id, myObj) -> {
+                myObj.getTile().getSprite().draw(spriteBatch);
+            });
+        }
+
         entityMap.forEach((id, entity) -> entity.getSprite().draw(spriteBatch));
+
         spriteBatch.end();
+
+
+
 
         // UI will be rendered last
         stage.act();

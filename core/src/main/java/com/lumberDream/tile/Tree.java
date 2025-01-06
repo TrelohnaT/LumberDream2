@@ -1,7 +1,7 @@
 package com.lumberDream.tile;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.lumberDream.config.biomes.ConfigTree;
+import com.lumberDream.config.objects.ConfigTree;
 
 public class Tree implements Tile{
 
@@ -16,13 +16,21 @@ public class Tree implements Tile{
     private float width = 0;
     private float height = 0;
 
-    public Tree(ConfigTree configTree, Sprite sprite) {
+    public Tree(String id, String type, float x, float y, Sprite sprite) {
+        this.id = id;
+        this.type = type;
+        this.x = x * 100;
+        this.y = y * 100 * -1; // origin is in TOP left corner
+        load(sprite);
+    }
+
+    /*public Tree(ConfigTree configTree, Sprite sprite) {
         this.id = configTree.id;
         this.type = configTree.type;
         this.x = configTree.x * 100;
         this.y = configTree.y * 100 * -1; // origin is in TOP left corner
         load(sprite);
-    }
+    }*/
 
     public Tree(
         String id,

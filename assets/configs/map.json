@@ -8,35 +8,9 @@
       "type" : "oakForest",
       "heightOffset" : 0,
       "height" : 20,
-      "trees": [
-        {
-          "id": "tree_oak_1",
-          "type": "oak",
-          "x": 5,
-          "y": 5
-        },
-        {
-          "id": "tree_oak_2",
-          "type": "oak",
-          "x": 8,
-          "y": 5
-        }
-      ]
-    },
-    {
-      "type" : "lonelyForest",
-      "height" : 20,
-      "heightOffset" : 20,
-      "trees": [
-        {
-          "id": "tree_willow_1",
-          "type": "willow",
-          "x": 5,
-          "y": 5
-        }
-      ]
-    }
+      "treeType": "oak"
 
+    }
   ]
 
 }

@@ -8,9 +8,9 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 public class ViewStuffHandler {
 
 
-    private OrthographicCamera camera;
-    private Vector3 cameraVector = new Vector3();
-    private ExtendViewport viewport;
+    private final OrthographicCamera camera;
+    private final Vector3 cameraVector = new Vector3();
+    private final ExtendViewport viewport;
 
 
     public ViewStuffHandler() {
