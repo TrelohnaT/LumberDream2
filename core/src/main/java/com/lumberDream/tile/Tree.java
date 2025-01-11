@@ -52,6 +52,11 @@ public class Tree implements Tile{
     }
 
     @Override
+    public String getTextureName() {
+        return "";
+    }
+
+    @Override
     public float getX() {
         return this.x;
     }

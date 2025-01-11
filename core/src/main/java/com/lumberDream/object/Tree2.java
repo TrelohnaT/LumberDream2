@@ -1,29 +1,42 @@
 package com.lumberDream.object;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.lumberDream.config.objects.ConfigTree;
+import com.badlogic.gdx.math.Rectangle;
 import com.lumberDream.tile.Tile;
 import com.lumberDream.tile.Tree;
 
-import java.awt.*;
 
 public class Tree2 implements MyObject {
 
-    private  ConfigTree configTree;
-    private  Tile tile;
-    private Rectangle hitbox;
+    private final String id;
+    private final String type;
+    private final float x;
+    private final float y;
+    private final float sizeX;
+    private final float sizeY;
+
+    private final Tile tile;
+    private final Rectangle hitBox;
 
     public Tree2(String id, String type, float x, float y, Sprite sprite) {
+        this.id = id;
+        this.type = type;
+        this.x = x;
+        this.y = y;
+
         this.tile = new Tree(id, type, x, y, sprite);
-        this.hitbox = new Rectangle((int) tile.getX(), (int) tile.getY(), 2, 2);
-    }
 
-    public Tree2(ConfigTree configTree, Sprite sprite) {
-        this.configTree = configTree;
-        //this.tile = new Tree(configTree, sprite);
-        this.hitbox = new Rectangle((int) tile.getX(), (int) tile.getY(), 2, 2);
-    }
+        this.sizeX = sprite.getWidth();
+        this.sizeY = sprite.getHeight();
 
+        // tree hit box will be only on the trunk of the tree
+        this.hitBox = new Rectangle(
+            (int) tile.getX() + this.sizeX/4,
+            (int) tile.getY(),
+            this.sizeX/2,
+            this.sizeY/2
+        );
+    }
 
     @Override
     public Tile getTile() {
@@ -32,6 +45,6 @@ public class Tree2 implements MyObject {
 
     @Override
     public Rectangle getHitBox() {
-        return hitbox;
+        return hitBox;
     }
 }

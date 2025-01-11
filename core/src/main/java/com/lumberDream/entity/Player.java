@@ -22,6 +22,10 @@ public class Player implements Entity {
     private float y = 0; // not pixels but tiles
     private float previousX = 0;
     private float previousY = 0;
+
+    private float sizeX = 0;
+    private float sizeY = 0;
+
     private final float speed = 150f;
 
 
@@ -42,6 +46,10 @@ public class Player implements Entity {
         this.x = x;
         this.y = y;
         this.load();
+        Sprite tmp = new Sprite(this.atlas.createSprite("idle_animation"));
+        this.sizeX = tmp.getWidth();
+        this.sizeY = tmp.getHeight();
+        this.hitBox = new Rectangle(x - this.sizeX/2, y - this.sizeY/2, this.sizeX, this.sizeY);
     }
 
     public void update() {
@@ -76,7 +84,7 @@ public class Player implements Entity {
             currentAnimation = idleAnimation;
         } else {
             // move hitBox
-            this.hitBox.setPosition(this.x, this.y);
+            this.hitBox.setPosition(this.x - this.sizeX/2, this.y - this.sizeY/2);
         }
     }
 
@@ -87,7 +95,6 @@ public class Player implements Entity {
         Sprite tmp = new Sprite(tr);
         tmp.translateX(this.x - tmp.getWidth()/2);
         tmp.translateY(this.y - tmp.getHeight()/2);
-        this.hitBox = new Rectangle(x, y, tmp.getWidth(), tmp.getHeight());
         return tmp;
     }
 

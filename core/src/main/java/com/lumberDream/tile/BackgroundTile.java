@@ -1,11 +1,11 @@
 package com.lumberDream.tile;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
-public class Grass implements Tile{
+public class BackgroundTile implements Tile{
 
     private final String id;
+    private final String textureName;
     private boolean isLoaded = false;
 
     private Sprite sprite;
@@ -14,8 +14,9 @@ public class Grass implements Tile{
     private float width = 0;
     private float height = 0;
 
-    public Grass(String id, Sprite sprite, float x, float y) {
+    public BackgroundTile(String id, String textureName, Sprite sprite, float x, float y) {
         this.id = id;
+        this.textureName = textureName;
         this.x = x * sprite.getWidth();
         this.y = y * sprite.getWidth();
         // we need to load sprite once to know its width and height
@@ -25,6 +26,11 @@ public class Grass implements Tile{
     @Override
     public String getId() {
         return this.id;
+    }
+
+    @Override
+    public String getTextureName() {
+        return this.textureName;
     }
 
     @Override

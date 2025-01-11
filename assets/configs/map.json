@@ -5,9 +5,17 @@
 
   "biomes": [
     {
-      "type" : "oakForest",
+      "type" : "sky",
       "heightOffset" : 0,
+      "height" : 2,
+      "backgroundTileName" : "sky_tile",
+      "treeType" : ""
+    },
+    {
+      "type" : "oakForest",
+      "heightOffset" : 2,
       "height" : 20,
+      "backgroundTileName" : "grass_bg",
       "treeType": "oak"
 
     }

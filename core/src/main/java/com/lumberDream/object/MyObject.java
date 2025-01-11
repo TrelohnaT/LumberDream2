@@ -1,8 +1,8 @@
 package com.lumberDream.object;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.lumberDream.tile.Tile;
 
-import java.awt.*;
 
 public interface MyObject {
 

@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 public interface Tile {
 
     String getId();
+    String getTextureName();
     float getX();
     float getY();
     float getWidth();

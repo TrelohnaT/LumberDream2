@@ -4,8 +4,11 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.lumberDream.config.ConfigFactory;
@@ -13,6 +16,7 @@ import com.lumberDream.entity.Entity;
 import com.lumberDream.entity.Player;
 import com.lumberDream.handlers.UiHandler;
 import com.lumberDream.handlers.ViewStuffHandler;
+import com.lumberDream.object.MyObject;
 import com.lumberDream.object.MyObjectHandler;
 import com.lumberDream.tile.BackGroundManager;
 
@@ -30,6 +34,8 @@ public class FirstScreen implements Screen {
     private ViewStuffHandler viewStuffHandler;
     private MyObjectHandler objectHandler;
     private SpriteBatch spriteBatch;
+
+    private ShapeRenderer sr;
     private Stage stage;
     private UiHandler uiHandler;
     private final Map<String, Entity> entityMap = new HashMap<>();
@@ -46,6 +52,7 @@ public class FirstScreen implements Screen {
         viewStuffHandler = new ViewStuffHandler();
         objectHandler = new MyObjectHandler(ConfigFactory.getObjectConfig());
 
+        sr = new ShapeRenderer();
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
@@ -63,21 +70,10 @@ public class FirstScreen implements Screen {
         );
 
         backGroundManager = new BackGroundManager(
-            600,
+            700,
             400,
             ConfigFactory.getMapConfig()
         );
-
-//        backGroundManager = new BackGroundManager(
-//            0,
-//            0,
-//            6,
-//            4,
-//            BackGroundManager.mapBlueprint,
-//            "background/background.atlas");
-        //backGroundManager = new BackGroundManager(1, 1);
-        //backGroundManager.generateBackground("grass_bg", "background/background.atlas");
-
 
     }
 
@@ -103,7 +99,20 @@ public class FirstScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.N)) {
             agame.setScreen(new SecondScreen(agame));
         }
+        // handle collision
+        for(Entity entityChecked : this.entityMap.values()) {
 
+            // collision between objects
+            for(MyObject myObject : this.objectHandler.getObjectMap().values()) {
+                if(entityChecked.getHitBox().overlaps(myObject.getHitBox())) {
+                    entityChecked.hitObstacle();
+                    break;
+                }
+            }
+            
+        }
+
+        // update entities
         entityMap.forEach((id, entity) -> entity.update());
 
         spriteBatch.begin();
@@ -126,23 +135,26 @@ public class FirstScreen implements Screen {
         spriteBatch.end();
 
 
-
-
         // UI will be rendered last
         stage.act();
         stage.draw();
 
-        //ToDo cause memory leak
-/*
-        ShapeRenderer sr = new ShapeRenderer();
-        sr.setProjectionMatrix(viewport.getCamera().combined);
+
+        sr.setProjectionMatrix(viewStuffHandler.getViewport().getCamera().combined);
         sr.begin(ShapeRenderer.ShapeType.Line);
-        sr.setColor(new Color(0, 0, 1, 0));
         for (var entry : entityMap.entrySet()) {
             Rectangle tmp = entry.getValue().getHitBox();
+            sr.setColor(new Color(0, 0, 1, 0));
             sr.rect(tmp.x, tmp.y, tmp.width, tmp.height);
         }
-        sr.end();*/
+
+        for(MyObject myObject : objectHandler.getObjectMap().values()) {
+            Rectangle tmp = myObject.getHitBox();
+            sr.setColor(new Color(1, 0, 0, 0));
+            sr.rect(tmp.x, tmp.y, tmp.width, tmp.height);
+        }
+
+        sr.end();
     }
 
     @Override
