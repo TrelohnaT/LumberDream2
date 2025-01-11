@@ -80,81 +80,27 @@ public class FirstScreen implements Screen {
     @Override
     public void render(float delta) {
 
-        Main.timeElapsed += Gdx.graphics.getDeltaTime();
-        // Draw your screen here. "delta" is the time since last render in seconds.
-        Gdx.gl.glClearColor(1, 1, 1, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        viewStuffHandler.getViewport().getCamera().update();
-        viewStuffHandler.getViewport().apply();
-        spriteBatch.setProjectionMatrix(viewStuffHandler.getViewport().getCamera().combined);
 
-
-        // camera follows player character
         Entity player = this.entityMap.get("player");
-        // we want player to be in the middle of viewport
-        // players position is in the left bottom corner
-        viewStuffHandler.moveCamera(player.getX() + 0.5f, player.getY() + 0.5f);
 
+        handleViewPort(player);
 
+        // test switching to next screen
         if (Gdx.input.isKeyPressed(Input.Keys.N)) {
             agame.setScreen(new SecondScreen(agame));
         }
-        // handle collision
-        for(Entity entityChecked : this.entityMap.values()) {
 
-            // collision between objects
-            for(MyObject myObject : this.objectHandler.getObjectMap().values()) {
-                if(entityChecked.getHitBox().overlaps(myObject.getHitBox())) {
-                    entityChecked.hitObstacle();
-                    break;
-                }
-            }
-            
-        }
+        handleCollisions();
 
-        // update entities
-        entityMap.forEach((id, entity) -> entity.update());
+        updateEntities();
 
-        spriteBatch.begin();
+        drawNonUiStuff(player);
 
-        if (this.backGroundManager != null) {
-            // first background
-            this.backGroundManager.getTileMap(player.getX(), player.getY())
-                .forEach((id, tile) -> tile.getSprite().draw(spriteBatch));
+        drawUi();
 
-        }
+        // for debugging
+        drawHitBoxes();
 
-        if(this.objectHandler != null) {
-            this.objectHandler.getObjectMap().forEach((id, myObj) -> {
-                myObj.getTile().getSprite().draw(spriteBatch);
-            });
-        }
-
-        entityMap.forEach((id, entity) -> entity.getSprite().draw(spriteBatch));
-
-        spriteBatch.end();
-
-
-        // UI will be rendered last
-        stage.act();
-        stage.draw();
-
-
-        sr.setProjectionMatrix(viewStuffHandler.getViewport().getCamera().combined);
-        sr.begin(ShapeRenderer.ShapeType.Line);
-        for (var entry : entityMap.entrySet()) {
-            Rectangle tmp = entry.getValue().getHitBox();
-            sr.setColor(new Color(0, 0, 1, 0));
-            sr.rect(tmp.x, tmp.y, tmp.width, tmp.height);
-        }
-
-        for(MyObject myObject : objectHandler.getObjectMap().values()) {
-            Rectangle tmp = myObject.getHitBox();
-            sr.setColor(new Color(1, 0, 0, 0));
-            sr.rect(tmp.x, tmp.y, tmp.width, tmp.height);
-        }
-
-        sr.end();
     }
 
     @Override
@@ -187,6 +133,86 @@ public class FirstScreen implements Screen {
         uiHandler.dispose();
         uiHandler = null;
         viewStuffHandler = null;
+
+    }
+
+    private void handleViewPort(Entity player) {
+        Main.timeElapsed += Gdx.graphics.getDeltaTime();
+        // Draw your screen here. "delta" is the time since last render in seconds.
+        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        viewStuffHandler.getViewport().getCamera().update();
+        viewStuffHandler.getViewport().apply();
+        spriteBatch.setProjectionMatrix(viewStuffHandler.getViewport().getCamera().combined);
+
+        // camera follows player character
+        // we want player to be in the middle of viewport
+        // players position is in the left bottom corner
+        viewStuffHandler.moveCamera(player.getX() + 0.5f, player.getY() + 0.5f);
+
+    }
+
+    private void handleCollisions() {
+        for(Entity entityChecked : this.entityMap.values()) {
+            // collision between objects
+            for(MyObject myObject : this.objectHandler.getObjectMap().values()) {
+                if(entityChecked.getHitBox().overlaps(myObject.getHitBox())) {
+                    entityChecked.hitObstacle();
+                    break;
+                }
+            }
+        }
+
+    }
+
+    private void updateEntities() {
+        entityMap.forEach((id, entity) -> entity.update());
+
+    }
+
+    private void drawNonUiStuff(Entity player) {
+        spriteBatch.begin();
+        if (this.backGroundManager != null) {
+            // first background
+            this.backGroundManager.getTileMap(player.getX(), player.getY())
+                .forEach((id, tile) -> tile.getSprite().draw(spriteBatch));
+
+        }
+
+        if(this.objectHandler != null) {
+            this.objectHandler.getObjectMap().forEach((id, myObj) -> {
+                myObj.getTile().getSprite().draw(spriteBatch);
+            });
+        }
+
+        entityMap.forEach((id, entity) -> entity.getSprite().draw(spriteBatch));
+
+        spriteBatch.end();
+    }
+
+
+    private void drawUi() {
+        // UI will be rendered last
+        stage.act();
+        stage.draw();
+
+    }
+
+    private void drawHitBoxes() {
+        sr.setProjectionMatrix(viewStuffHandler.getViewport().getCamera().combined);
+        sr.begin(ShapeRenderer.ShapeType.Line);
+        for (var entry : entityMap.entrySet()) {
+            Rectangle tmp = entry.getValue().getHitBox();
+            sr.setColor(new Color(0, 0, 1, 0));
+            sr.rect(tmp.x, tmp.y, tmp.width, tmp.height);
+        }
+        for(MyObject myObject : objectHandler.getObjectMap().values()) {
+            Rectangle tmp = myObject.getHitBox();
+            sr.setColor(new Color(1, 0, 0, 0));
+            sr.rect(tmp.x, tmp.y, tmp.width, tmp.height);
+        }
+
+        sr.end();
 
     }
 
