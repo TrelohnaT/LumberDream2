@@ -50,7 +50,11 @@ public class FirstScreen implements Screen {
         spriteBatch = new SpriteBatch();
         uiHandler = new UiHandler();
         viewStuffHandler = new ViewStuffHandler();
-        objectHandler = new MyObjectHandler(ConfigFactory.getObjectConfig());
+        objectHandler = new MyObjectHandler(
+            ConfigFactory.getObjectConfig(),
+            350,
+            200
+        );
 
         sr = new ShapeRenderer();
         stage = new Stage(new ScreenViewport());
@@ -180,9 +184,8 @@ public class FirstScreen implements Screen {
         }
 
         if(this.objectHandler != null) {
-            this.objectHandler.getObjectMap().forEach((id, myObj) -> {
-                myObj.getTile().getSprite().draw(spriteBatch);
-            });
+            this.objectHandler.getObjectMap(player.getX(), player.getY())
+                .forEach((id, myObj) -> myObj.getTile().getSprite().draw(spriteBatch));
         }
 
         entityMap.forEach((id, entity) -> entity.getSprite().draw(spriteBatch));
@@ -211,6 +214,14 @@ public class FirstScreen implements Screen {
             sr.setColor(new Color(1, 0, 0, 0));
             sr.rect(tmp.x, tmp.y, tmp.width, tmp.height);
         }
+
+        sr.setColor(new Color(0,0,0,0));
+        sr.rect(
+            viewStuffHandler.getActualViewPort().x,
+            viewStuffHandler.getActualViewPort().y,
+            viewStuffHandler.getActualViewPort().width,
+            viewStuffHandler.getActualViewPort().height
+        );
 
         sr.end();
 

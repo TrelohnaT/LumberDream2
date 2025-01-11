@@ -26,14 +26,14 @@ public class Player implements Entity {
     private float sizeX = 0;
     private float sizeY = 0;
 
-    private final float speed = 150f;
+    private final float speed = 250f;
 
 
     private final String atlasPath;
     private TextureAtlas atlas;
     private String currentAnimation = idleAnimation;
 
-    private Rectangle hitBox; // ToDo check if this is alright
+    private final Rectangle hitBox;
 
     public Player(
         String id,
