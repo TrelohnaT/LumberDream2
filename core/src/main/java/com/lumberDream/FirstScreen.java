@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.lumberDream.config.ConfigFactory;
 import com.lumberDream.entity.Entity;
@@ -21,6 +22,7 @@ import com.lumberDream.object.MyObjectHandler;
 import com.lumberDream.tile.BackGroundManager;
 import com.lumberDream.utils.HitBox;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,7 +60,7 @@ public class FirstScreen implements Screen {
         );
 
         sr = new ShapeRenderer();
-        stage = new Stage(new ScreenViewport());
+        stage = new Stage();
         Gdx.input.setInputProcessor(stage);
 
         stage.addActor(uiHandler.getUi());
@@ -84,7 +86,7 @@ public class FirstScreen implements Screen {
 
     @Override
     public void render(float delta) {
-
+        Main.timeElapsed += delta;
 
         Entity player = this.entityMap.get("player");
 
@@ -112,6 +114,7 @@ public class FirstScreen implements Screen {
     public void resize(int width, int height) {
         // Resize your screen here. The parameters represent the new window size.
         viewStuffHandler.resize(width, height);
+        stage.getViewport().update(width, height, true);
     }
 
     @Override
@@ -142,7 +145,6 @@ public class FirstScreen implements Screen {
     }
 
     private void handleViewPort(Entity player) {
-        Main.timeElapsed += Gdx.graphics.getDeltaTime();
         // Draw your screen here. "delta" is the time since last render in seconds.
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -204,6 +206,7 @@ public class FirstScreen implements Screen {
 
 
     private void drawUi() {
+        //stage.setViewport(viewStuffHandler.getViewport());
         // UI will be rendered last
         stage.act();
         stage.draw();
