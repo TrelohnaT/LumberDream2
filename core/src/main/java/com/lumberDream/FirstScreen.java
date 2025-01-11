@@ -19,6 +19,7 @@ import com.lumberDream.handlers.ViewStuffHandler;
 import com.lumberDream.object.MyObject;
 import com.lumberDream.object.MyObjectHandler;
 import com.lumberDream.tile.BackGroundManager;
+import com.lumberDream.utils.HitBox;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -160,10 +161,18 @@ public class FirstScreen implements Screen {
         for(Entity entityChecked : this.entityMap.values()) {
             // collision between objects
             for(MyObject myObject : this.objectHandler.getObjectMap().values()) {
-                if(entityChecked.getHitBox().overlaps(myObject.getHitBox())) {
-                    entityChecked.hitObstacle();
-                    break;
+                for(HitBox hitBox : myObject.getHitBoxList()) {
+                    if(entityChecked.getHitBox().overlaps(hitBox.rectangle)) {
+                        if (hitBox.type == HitBox.types.UnEnterAble) {
+                            entityChecked.hitObstacle();
+                        }
+                        if (hitBox.type == HitBox.types.EnterAble) {
+                            System.out.println("tree : " + myObject.getTile().getId() + " can be cut down");
+
+                        }
+                    }
                 }
+
             }
         }
 
@@ -210,9 +219,18 @@ public class FirstScreen implements Screen {
             sr.rect(tmp.x, tmp.y, tmp.width, tmp.height);
         }
         for(MyObject myObject : objectHandler.getObjectMap().values()) {
-            Rectangle tmp = myObject.getHitBox();
-            sr.setColor(new Color(1, 0, 0, 0));
-            sr.rect(tmp.x, tmp.y, tmp.width, tmp.height);
+            for(HitBox hitBox : myObject.getHitBoxList()) {
+                if(hitBox.type == HitBox.types.UnEnterAble) {
+                    Rectangle tmp = hitBox.rectangle;
+                    sr.setColor(new Color(1, 0, 0, 0));
+                    sr.rect(tmp.x, tmp.y, tmp.width, tmp.height);
+                } else if(hitBox.type == HitBox.types.EnterAble) {
+                    Rectangle tmp = hitBox.rectangle;
+                    sr.setColor(new Color(0, 1, 0, 0));
+                    sr.rect(tmp.x, tmp.y, tmp.width, tmp.height);
+                }
+            }
+
         }
 
         sr.setColor(new Color(0,0,0,0));
