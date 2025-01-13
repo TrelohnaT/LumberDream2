@@ -70,7 +70,7 @@ public class FirstScreen implements Screen {
             "player",
             new Player(
                 "player",
-                "atlasPlayerMove/playerMove.atlas",
+                "playerMove2/playerMove2.atlas",//"atlasPlayerMove/playerMove.atlas",
                 500,
                 -500
             )
@@ -199,7 +199,11 @@ public class FirstScreen implements Screen {
                 .forEach((id, myObj) -> myObj.getTile().getSprite().draw(spriteBatch));
         }
 
-        entityMap.forEach((id, entity) -> entity.getSprite().draw(spriteBatch));
+        //entityMap.forEach((id, entity) -> entity.getSprite().draw(spriteBatch));
+
+        entityMap.forEach((id, entity) -> {
+            entity.getSpriteList().forEach(sprite -> sprite.draw(spriteBatch));
+        });
 
         spriteBatch.end();
     }

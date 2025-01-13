@@ -3,6 +3,8 @@ package com.lumberDream.entity;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Rectangle;
 
+import java.util.List;
+
 public interface Entity {
     String getId();
 
@@ -10,7 +12,8 @@ public interface Entity {
 
     float getY();
 
-    Sprite getSprite();
+
+    List<Sprite> getSpriteList();
 
     Rectangle getHitBox();
 
