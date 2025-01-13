@@ -23,6 +23,9 @@ public class Player implements Entity {
 
     private final AnimationHandler idleAnimation;
     private final AnimationHandler frontWalkAnimation;
+    private final AnimationHandler backWalkAnimation;
+    private final AnimationHandler leftWalkAnimation;
+    private final AnimationHandler rightWalkAnimation;
 
     private String id = "";
     private float x = 0; // not pixels but tiles
@@ -58,22 +61,42 @@ public class Player implements Entity {
         this.sizeY = 128;//tmp.getHeight();
         this.hitBox = new Rectangle(x - this.sizeX / 2, y - this.sizeY / 2, this.sizeX, this.sizeY);
 
-        Map<String, Float> a = new HashMap<>();
-        a.put(BodyAnimationParts.idle + "_" + BodyAnimationParts.body, 0.5f);
-        a.put(BodyAnimationParts.idle + "_" + BodyAnimationParts.head, 0.5f);
-        a.put(BodyAnimationParts.idle + "_" + BodyAnimationParts.hands, 0.5f);
-        a.put(BodyAnimationParts.idle + "_" + BodyAnimationParts.legs, 1f);
+        // ToDo make this prettier and make the order of frames to be configurable, idle head should be on top
 
-        idleAnimation = new AnimationHandler("playerAnimations/idle/idle.atlas", a);
+        Map<String, Float> idleSpeed = new HashMap<>();
+        idleSpeed.put(BodyAnimationParts.idle + "_" + BodyAnimationParts.body, 0.5f);
+        idleSpeed.put(BodyAnimationParts.idle + "_" + BodyAnimationParts.head, 0.5f);
+        idleSpeed.put(BodyAnimationParts.idle + "_" + BodyAnimationParts.hands, 0.5f);
+        idleSpeed.put(BodyAnimationParts.idle + "_" + BodyAnimationParts.legs, 1f);
+        idleAnimation = new AnimationHandler("playerAnimations/idle/idle.atlas", idleSpeed);
 
-        Map<String, Float> b = new HashMap<>();
-        b.put(BodyAnimationParts.front + "_" + BodyAnimationParts.body, 1 / 15f);
-        b.put(BodyAnimationParts.front + "_" + BodyAnimationParts.head, 0.5f);
-        b.put(BodyAnimationParts.front + "_" + BodyAnimationParts.hands, 1 / 15f);
-        b.put(BodyAnimationParts.front + "_" + BodyAnimationParts.legs, 1 / 15f);
+        Map<String, Float> frontAnimationSpeed = new HashMap<>();
+        frontAnimationSpeed.put(BodyAnimationParts.front + "_" + BodyAnimationParts.body, 1 / 15f);
+        frontAnimationSpeed.put(BodyAnimationParts.front + "_" + BodyAnimationParts.head, 0.5f);
+        frontAnimationSpeed.put(BodyAnimationParts.front + "_" + BodyAnimationParts.hands, 1 / 15f);
+        frontAnimationSpeed.put(BodyAnimationParts.front + "_" + BodyAnimationParts.legs, 1 / 15f);
+        frontWalkAnimation = new AnimationHandler("playerAnimations/front/walk_front.atlas", frontAnimationSpeed);
 
-        frontWalkAnimation = new AnimationHandler("playerAnimations/front/walk_front.atlas", b);
+        Map<String, Float> backAnimationSpeed = new HashMap<>();
+        backAnimationSpeed.put(BodyAnimationParts.back + "_" + BodyAnimationParts.body, 1 / 15f);
+        backAnimationSpeed.put(BodyAnimationParts.back + "_" + BodyAnimationParts.head, 0.5f);
+        backAnimationSpeed.put(BodyAnimationParts.back + "_" + BodyAnimationParts.hands, 1 / 15f);
+        backAnimationSpeed.put(BodyAnimationParts.back + "_" + BodyAnimationParts.legs, 1 / 15f);
+        backWalkAnimation = new AnimationHandler("playerAnimations/walk_back/walk_back.atlas", backAnimationSpeed);
 
+        Map<String, Float> leftAnimationSpeed = new HashMap<>();
+        leftAnimationSpeed.put(BodyAnimationParts.left + "_" + BodyAnimationParts.body, 1 / 15f);
+        leftAnimationSpeed.put(BodyAnimationParts.left + "_" + BodyAnimationParts.head, 0.5f);
+        leftAnimationSpeed.put(BodyAnimationParts.left + "_" + BodyAnimationParts.hands, 1 / 15f);
+        leftAnimationSpeed.put(BodyAnimationParts.left + "_" + BodyAnimationParts.legs, 1 / 15f);
+        leftWalkAnimation = new AnimationHandler("playerAnimations/walk_left/walk_left.atlas", leftAnimationSpeed);
+
+        Map<String, Float> rightAnimationSpeed = new HashMap<>();
+        rightAnimationSpeed.put(BodyAnimationParts.right + "_" + BodyAnimationParts.body, 1 / 15f);
+        rightAnimationSpeed.put(BodyAnimationParts.right + "_" + BodyAnimationParts.head, 0.5f);
+        rightAnimationSpeed.put(BodyAnimationParts.right + "_" + BodyAnimationParts.hands, 1 / 15f);
+        rightAnimationSpeed.put(BodyAnimationParts.right + "_" + BodyAnimationParts.legs, 1 / 15f);
+        rightWalkAnimation = new AnimationHandler("playerAnimations/walk_right/walk_right.atlas", rightAnimationSpeed);
     }
 
     public void update() {
@@ -119,11 +142,11 @@ public class Player implements Entity {
         } else if (currentAnimation.equals(frontWalk)) {
             return frontWalkAnimation.getSpriteList(this.x, this.y);
         } else if (currentAnimation.equals(backWalk)) {
-
+            return backWalkAnimation.getSpriteList(this.x, this.y);
         } else if (currentAnimation.equals(leftWalk)) {
-
+            return leftWalkAnimation.getSpriteList(this.x, this.y);
         } else if (currentAnimation.equals(rightWalk)) {
-
+            return rightWalkAnimation.getSpriteList(this.x, this.y);
         }
         return List.of();
     }

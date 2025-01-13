@@ -31,6 +31,7 @@ public class AnimationHandler implements Disposable {
     public AnimationHandler(String atlasPath, Map<String, Float> animationSpeedMap) {
         this.atlas = new TextureAtlas(atlasPath);
 
+
         atlas.getRegions().forEach(region -> {
             System.out.println(region.name);
             animationMap.put(
