@@ -40,7 +40,6 @@ public class Player implements Entity {
 
 
     private final String atlasPath;
-    private TextureAtlas atlas;
     private String currentAnimation = idle_animation;
 
     private final Rectangle hitBox;
@@ -55,9 +54,7 @@ public class Player implements Entity {
         this.atlasPath = atlasPath;
         this.x = x;
         this.y = y;
-        this.load();
-        //Sprite tmp = new Sprite(this.atlas.createSprite("idle_animation"));
-        this.sizeX = 128;//tmp.getWidth();
+        this.sizeX = 128;//tmp.getWidth(); //ToDo this might make some issues
         this.sizeY = 128;//tmp.getHeight();
         this.hitBox = new Rectangle(x - this.sizeX / 2, y - this.sizeY / 2, this.sizeX, this.sizeY);
 
@@ -185,6 +182,5 @@ public class Player implements Entity {
 
     @Override
     public void clear() {
-        //this.atlas.dispose();
     }
 }

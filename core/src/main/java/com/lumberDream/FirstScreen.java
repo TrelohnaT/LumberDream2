@@ -88,6 +88,8 @@ public class FirstScreen implements Screen {
     public void render(float delta) {
         Main.timeElapsed += delta;
 
+        Map<String, Boolean> uiButtonState = uiHandler.getClickedState();
+
         Entity player = this.entityMap.get("player");
 
         handleViewPort(player);
@@ -212,7 +214,7 @@ public class FirstScreen implements Screen {
     private void drawUi() {
         //stage.setViewport(viewStuffHandler.getViewport());
         // UI will be rendered last
-        stage.act();
+        stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
 
     }

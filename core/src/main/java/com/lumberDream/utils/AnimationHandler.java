@@ -50,13 +50,6 @@ public class AnimationHandler implements Disposable {
         return tmpList;
     }
 
-    public Optional<Animation<TextureRegion>> getAnimation(String name) {
-        if (this.animationMap.containsKey(name)) {
-            return Optional.of(this.animationMap.get(name));
-        }
-        return Optional.empty();
-    }
-
     @Override
     public void dispose() {
         this.atlas.dispose();
