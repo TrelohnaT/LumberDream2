@@ -3,29 +3,13 @@ package com.lumberDream.entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Rectangle;
-import com.lumberDream.utils.AnimationHandler;
-import com.lumberDream.utils.BodyAnimationParts;
+import com.lumberDream.entity.states.*;
+import com.lumberDream.utils.NameLib;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Player implements Entity {
-
-
-    private final String idle_animation = "idle_animation";
-    private final String frontWalk = "front_walk";
-    private final String backWalk = "back_walk";
-    private final String leftWalk = "left_walk";
-    private final String rightWalk = "right_walk";
-
-    private final AnimationHandler idleAnimation;
-    private final AnimationHandler frontWalkAnimation;
-    private final AnimationHandler backWalkAnimation;
-    private final AnimationHandler leftWalkAnimation;
-    private final AnimationHandler rightWalkAnimation;
 
     private String id = "";
     private float x = 0; // not pixels but tiles
@@ -38,9 +22,11 @@ public class Player implements Entity {
 
     private final float speed = 250f;
 
+    private PlayerState state;
+
+    private boolean faceRight = false;
 
     private final String atlasPath;
-    private String currentAnimation = idle_animation;
 
     private final Rectangle hitBox;
 
@@ -58,42 +44,20 @@ public class Player implements Entity {
         this.sizeY = 128;//tmp.getHeight();
         this.hitBox = new Rectangle(x - this.sizeX / 2, y - this.sizeY / 2, this.sizeX, this.sizeY);
 
-        // ToDo make this prettier and make the order of frames to be configurable, idle head should be on top
+        this.state = new IdleState("playerAnimations/idle/idle.atlas");
 
-        Map<String, Float> idleSpeed = new HashMap<>();
-        idleSpeed.put(BodyAnimationParts.body, 0.5f);
-        idleSpeed.put(BodyAnimationParts.hands, 0.5f);
-        idleSpeed.put(BodyAnimationParts.legs, 1f);
-        idleSpeed.put(BodyAnimationParts.head, 0.5f);
-        idleAnimation = new AnimationHandler("playerAnimations/idle/idle.atlas", idleSpeed);
+    }
 
-        Map<String, Float> frontAnimationSpeed = new HashMap<>();
-        frontAnimationSpeed.put(BodyAnimationParts.body, 1 / 15f);
-        frontAnimationSpeed.put(BodyAnimationParts.head, 0.5f);
-        frontAnimationSpeed.put(BodyAnimationParts.hands, 1 / 15f);
-        frontAnimationSpeed.put(BodyAnimationParts.legs, 1 / 15f);
-        frontWalkAnimation = new AnimationHandler("playerAnimations/front/walk_front.atlas", frontAnimationSpeed);
+    private void changeState(StateTypes newState) {
 
-        Map<String, Float> backAnimationSpeed = new HashMap<>();
-        backAnimationSpeed.put(BodyAnimationParts.body, 1 / 15f);
-        backAnimationSpeed.put(BodyAnimationParts.head, 0.5f);
-        backAnimationSpeed.put(BodyAnimationParts.hands, 1 / 15f);
-        backAnimationSpeed.put(BodyAnimationParts.legs, 1 / 15f);
-        backWalkAnimation = new AnimationHandler("playerAnimations/walk_back/walk_back.atlas", backAnimationSpeed);
+        switch (newState) {
+            case idle -> this.state = new IdleState(NameLib.idleAnimationAtlas);
+            case walkHorizontal -> this.state = new WalkHorizontalState(NameLib.horizontalAnimationAtlas);
+            case walkDown -> this.state = new WalkDownState(NameLib.downAnimationAtlas);
+            case walkUp -> this.state = new WalkUpState(NameLib.upAnimationAtlas);
+        }
 
-        Map<String, Float> leftAnimationSpeed = new HashMap<>();
-        leftAnimationSpeed.put(BodyAnimationParts.body, 1 / 15f);
-        leftAnimationSpeed.put(BodyAnimationParts.head, 0.5f);
-        leftAnimationSpeed.put(BodyAnimationParts.hands, 1 / 15f);
-        leftAnimationSpeed.put(BodyAnimationParts.legs, 1 / 15f);
-        leftWalkAnimation = new AnimationHandler("playerAnimations/walk_left/walk_left.atlas", leftAnimationSpeed);
 
-        Map<String, Float> rightAnimationSpeed = new HashMap<>();
-        rightAnimationSpeed.put(BodyAnimationParts.body, 1 / 15f);
-        rightAnimationSpeed.put(BodyAnimationParts.head, 0.5f);
-        rightAnimationSpeed.put(BodyAnimationParts.hands, 1 / 15f);
-        rightAnimationSpeed.put(BodyAnimationParts.legs, 1 / 15f);
-        rightWalkAnimation = new AnimationHandler("playerAnimations/walk_right/walk_right.atlas", rightAnimationSpeed);
     }
 
     public void update() {
@@ -105,27 +69,29 @@ public class Player implements Entity {
         boolean idle = true;
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             this.y += this.speed * deltaTime;
-            currentAnimation = backWalk;
+            this.changeState(StateTypes.walkUp);
             idle = false;
         } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             this.y += this.speed * deltaTime * (-1);
-            currentAnimation = frontWalk;
+            this.changeState(StateTypes.walkDown);
             idle = false;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             this.x += this.speed * deltaTime * (-1);
-            currentAnimation = leftWalk;
+            this.changeState(StateTypes.walkHorizontal);
+            this.faceRight = false;
             idle = false;
         } else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             this.x += this.speed * deltaTime;
-            currentAnimation = rightWalk;
+            this.faceRight = true;
+            this.changeState(StateTypes.walkHorizontal);
             idle = false;
         }
 
         // if no movement, switch to idle animation
         if (idle) {
-            currentAnimation = idle_animation;
+            changeState(StateTypes.idle);
         } else {
             // move hitBox
             this.hitBox.setPosition(this.x - this.sizeX / 2, this.y - this.sizeY / 2);
@@ -134,18 +100,7 @@ public class Player implements Entity {
 
     @Override
     public List<Sprite> getSpriteList() {
-        if (currentAnimation.equals(idle_animation)) {
-            return idleAnimation.getSpriteList(this.x, this.y);
-        } else if (currentAnimation.equals(frontWalk)) {
-            return frontWalkAnimation.getSpriteList(this.x, this.y);
-        } else if (currentAnimation.equals(backWalk)) {
-            return backWalkAnimation.getSpriteList(this.x, this.y);
-        } else if (currentAnimation.equals(leftWalk)) {
-            return leftWalkAnimation.getSpriteList(this.x, this.y);
-        } else if (currentAnimation.equals(rightWalk)) {
-            return rightWalkAnimation.getSpriteList(this.x, this.y);
-        }
-        return List.of();
+        return state.getSpriteList(this.x, this.y, this.faceRight);
     }
 
     @Override

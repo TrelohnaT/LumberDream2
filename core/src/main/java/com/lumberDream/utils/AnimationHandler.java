@@ -29,12 +29,13 @@ public class AnimationHandler implements Disposable {
 
     }
 
-    public List<Sprite> getSpriteList(float x, float y) {
+    public List<Sprite> getSpriteList(float x, float y, boolean flip) {
         Map<String, Sprite> tmpMap = new HashMap<>();
         this.animationMap.forEach((name, animation) -> {
             Sprite tmp = new Sprite(animation.getKeyFrame(Main.timeElapsed, true));
             tmp.translateX(x - tmp.getWidth() / 2);
             tmp.translateY(y - tmp.getHeight() / 2);
+            tmp.flip(flip, false);
             tmpMap.put(name, tmp);
         });
 
