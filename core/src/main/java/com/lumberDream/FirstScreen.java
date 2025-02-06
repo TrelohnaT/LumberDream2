@@ -70,7 +70,6 @@ public class FirstScreen implements Screen {
             "player",
             new Player(
                 "player",
-                "playerMove2/playerMove2.atlas",//"atlasPlayerMove/playerMove.atlas",
                 500,
                 -500
             )
@@ -171,9 +170,12 @@ public class FirstScreen implements Screen {
                             entityChecked.hitObstacle();
                         }
                         if (hitBox.type == HitBox.types.EnterAble) {
-                            System.out.println("tree : " + myObject.getTile().getId() + " can be cut down");
+                            entityChecked.inReacOfInteraction(myObject);
+                            //System.out.println("tree : " + myObject.getTile().getId() + " can be cut down");
 
                         }
+                    } else {
+                        entityChecked.inReacOfInteraction(null);
                     }
                 }
 

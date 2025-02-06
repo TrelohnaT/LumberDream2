@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Tree2 implements MyObject {
 
-
+    private final MyObjectTypes type = MyObjectTypes.tree;
     private final Tile tile;
     private List<HitBox> hitBoxList = new LinkedList<>();
     private Rectangle hitBox;
@@ -58,6 +58,11 @@ public class Tree2 implements MyObject {
     @Override
     public Tile getTile() {
         return tile;
+    }
+
+    @Override
+    public MyObjectTypes getType() {
+        return this.type;
     }
 
     @Override

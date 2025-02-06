@@ -1,13 +1,13 @@
-package com.lumberDream.entity.states;
+package com.lumberDream.entity.states.movement;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import java.util.List;
 
-public interface PlayerState {
+public interface MovementState {
 
     List<Sprite> getSpriteList(float x, float y, boolean flip);
 
-    StateTypes getType();
+    MovementStateTypes getType();
 
 }

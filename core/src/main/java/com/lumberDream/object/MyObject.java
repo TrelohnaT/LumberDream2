@@ -11,6 +11,7 @@ import java.util.List;
 public interface MyObject {
 
     Tile getTile();
+    MyObjectTypes getType();
 
     Rectangle getHitBox();
     List<HitBox> getHitBoxList();

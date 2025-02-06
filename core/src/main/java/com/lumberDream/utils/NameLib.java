@@ -4,8 +4,8 @@ public class NameLib {
 
     public static final String idleAnimationAtlas = "playerAnimations/idle/idle.atlas";
     public static final String horizontalAnimationAtlas = "playerAnimations/walk_left/walk_left.atlas";
-    public static final String upAnimationAtlas = "playerAnimations/front/walk_front.atlas";
-    public static final String downAnimationAtlas = "playerAnimations/walk_back/walk_back.atlas";
+    public static final String upAnimationAtlas = "playerAnimations/walk_back/walk_back.atlas";
+    public static final String downAnimationAtlas = "playerAnimations/front/walk_front.atlas";
 
     public static final String head = "head";
     public static final String body = "body";

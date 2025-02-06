@@ -1,4 +1,4 @@
-package com.lumberDream.entity.states;
+package com.lumberDream.entity.states.movement;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.lumberDream.utils.AnimationHandler;
@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WalkUpState implements PlayerState{
+public class WalkUpState implements MovementState {
 
-    private final StateTypes type = StateTypes.idle;
+    private final MovementStateTypes type = MovementStateTypes.idle;
 
     private final AnimationHandler animation;
 
@@ -30,7 +30,7 @@ public class WalkUpState implements PlayerState{
     }
 
     @Override
-    public StateTypes getType() {
+    public MovementStateTypes getType() {
         return this.type;
     }
 }

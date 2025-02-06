@@ -4,9 +4,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Rectangle;
-import com.lumberDream.entity.states.*;
+import com.lumberDream.entity.states.activities.ActivityCutWood;
+import com.lumberDream.entity.states.activities.ActivityNone;
+import com.lumberDream.entity.states.activities.ActivityState;
+import com.lumberDream.entity.states.activities.ActivityStateType;
+import com.lumberDream.entity.states.movement.*;
+import com.lumberDream.object.MyObject;
+import com.lumberDream.object.MyObjectTypes;
 import com.lumberDream.utils.NameLib;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class Player implements Entity {
@@ -22,42 +29,47 @@ public class Player implements Entity {
 
     private final float speed = 250f;
 
-    private PlayerState state;
+    private MovementState movementState;
+    private ActivityState activityState;
 
     private boolean faceRight = false;
-
-    private final String atlasPath;
+    private boolean interacting = false;
 
     private final Rectangle hitBox;
 
     public Player(
         String id,
-        String atlasPath,
         float x,
         float y
     ) {
         this.id = id;
-        this.atlasPath = atlasPath;
         this.x = x;
         this.y = y;
         this.sizeX = 128;//tmp.getWidth(); //ToDo this might make some issues
         this.sizeY = 128;//tmp.getHeight();
         this.hitBox = new Rectangle(x - this.sizeX / 2, y - this.sizeY / 2, this.sizeX, this.sizeY);
 
-        this.state = new IdleState("playerAnimations/idle/idle.atlas");
+        this.movementState = new IdleState(NameLib.idleAnimationAtlas);
+        this.activityState = new ActivityNone();
 
     }
 
-    private void changeState(StateTypes newState) {
-
+    private void changeMovementState(MovementStateTypes newState) {
         switch (newState) {
-            case idle -> this.state = new IdleState(NameLib.idleAnimationAtlas);
-            case walkHorizontal -> this.state = new WalkHorizontalState(NameLib.horizontalAnimationAtlas);
-            case walkDown -> this.state = new WalkDownState(NameLib.downAnimationAtlas);
-            case walkUp -> this.state = new WalkUpState(NameLib.upAnimationAtlas);
+            case idle -> this.movementState = new IdleState(NameLib.idleAnimationAtlas);
+            case walkHorizontal -> this.movementState = new WalkHorizontalState(NameLib.horizontalAnimationAtlas);
+            case walkDown -> this.movementState = new WalkDownState(NameLib.downAnimationAtlas);
+            case walkUp -> this.movementState = new WalkUpState(NameLib.upAnimationAtlas);
+        }
+    }
+
+    private void changeActivityState(ActivityStateType newState, MyObject interactAble) {
+        switch (newState) {
+            case none -> this.activityState = new ActivityNone();
+            case cutWood -> this.activityState = new ActivityCutWood(interactAble);
         }
 
-
+        System.out.println(this.activityState.getType());
     }
 
     public void update() {
@@ -69,29 +81,36 @@ public class Player implements Entity {
         boolean idle = true;
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             this.y += this.speed * deltaTime;
-            this.changeState(StateTypes.walkUp);
+            this.changeMovementState(MovementStateTypes.walkUp);
             idle = false;
         } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             this.y += this.speed * deltaTime * (-1);
-            this.changeState(StateTypes.walkDown);
+            this.changeMovementState(MovementStateTypes.walkDown);
             idle = false;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             this.x += this.speed * deltaTime * (-1);
-            this.changeState(StateTypes.walkHorizontal);
+            this.changeMovementState(MovementStateTypes.walkHorizontal);
             this.faceRight = false;
             idle = false;
         } else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             this.x += this.speed * deltaTime;
             this.faceRight = true;
-            this.changeState(StateTypes.walkHorizontal);
+            this.changeMovementState(MovementStateTypes.walkHorizontal);
             idle = false;
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+            this.activityState.interact();
+            interacting = true;
+        } else {
+            interacting = false;
         }
 
         // if no movement, switch to idle animation
         if (idle) {
-            changeState(StateTypes.idle);
+            changeMovementState(MovementStateTypes.idle);
         } else {
             // move hitBox
             this.hitBox.setPosition(this.x - this.sizeX / 2, this.y - this.sizeY / 2);
@@ -100,7 +119,11 @@ public class Player implements Entity {
 
     @Override
     public List<Sprite> getSpriteList() {
-        return state.getSpriteList(this.x, this.y, this.faceRight);
+        if (interacting) {
+            return new LinkedList<>();
+        } else {
+            return movementState.getSpriteList(this.x, this.y, this.faceRight);
+        }
     }
 
     @Override
@@ -112,6 +135,20 @@ public class Player implements Entity {
     public void hitObstacle() {
         this.x = previousX;
         this.y = previousY;
+    }
+
+    @Override
+    public void inReacOfInteraction(MyObject interactAble) {
+        if (interactAble == null) {
+            this.changeActivityState(ActivityStateType.none, null);
+            return;
+
+        }
+
+        if (MyObjectTypes.tree.equals(interactAble.getType())) {
+            this.changeActivityState(ActivityStateType.cutWood, interactAble);
+        }
+
     }
 
     @Override
